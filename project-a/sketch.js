@@ -6,7 +6,7 @@ let clickCount = 0;
 let householdItems = [];
 
 function setup() {
- let canvas= createCanvas(800, 500); 
+let canvas = createCanvas(800, 500);
   canvas.parent("p5-canvas-container");
   angleMode(DEGREES);
   x = width / 2;
@@ -19,7 +19,8 @@ function setup() {
     { x: 300, y: 150, label: "coin", col: color(255, 215, 0) },
   ];
 
-  pickNewTarget();
+   pickNewTarget();
+  }
 }
 
 function draw() {
