@@ -117,7 +117,7 @@ function drawToy(tx, ty) {
     // i is the length
     // Lowered the multiplier to 3 for a "slight" wave
     let xOffset = sin(frameCount * 8 + i * 10) * 3; 
-    vertex(xOffset, 20 + i); 
+    vertex(xOffset, 30 + i); 
   }
   endShape();
 }
