@@ -55,7 +55,17 @@ function draw() {
     x += 15; // Bolt off the right side
   }
 
-  drawToy(x, y);
+drawToy(x, y);
+
+  // add this logic at the very bottom of draw()
+  if (mouseIsPressed) {
+    drawPaw(mouseX, mouseY);
+  } else {
+    // a tiny dot so you know where you're aiming
+    fill(0, 40);
+    noStroke();
+    circle(mouseX, mouseY, 5);
+  }
 }
 
 function drawObjects() {
@@ -122,7 +132,26 @@ function drawToy(tx, ty) {
     vertex(xOffset, 30 + i); 
   }
   endShape();
+  pop();
 }
+
+function drawPaw(px, py) {
+  push();
+  translate(px, py);
+  noStroke();
+  fill(80, 50, 30, 200); // Dark brown "cat paw" color
+  
+  // Main palm pad
+  ellipse(0, 5, 22, 18);
+  
+  // Four little toe pads
+  circle(-10, -8, 8);
+  circle(-4, -12, 8);
+  circle(4, -12, 8);
+  circle(10, -8, 8);
+  pop();
+}
+
 
 function pickNewTarget() {
   // 70% chance to target a household object, 30% random floor spot
@@ -161,4 +190,5 @@ function drawFloorDetails() {
   for (let i = 0; i < width; i += 60) {
     line(i, 0, i, height); // Floor planks
   }
+  
 }
