@@ -7,7 +7,7 @@ let householdItems = [];
 
 function setup() {
  let canvas= createCanvas(800, 500); 
-  canvas.parent("p5-canvas-container");}
+  canvas.parent("p5-canvas-container");
   angleMode(DEGREES);
   x = width / 2;
   y = height / 2;
