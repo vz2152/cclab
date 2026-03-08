@@ -6,12 +6,8 @@ let clickCount = 0;
 let householdItems = [];
 
 function setup() {
-  let canvas = createCanvas(800, 500);
-  canvas.parent("p5-canvas-container");
-
-
-
-  angleMode(DEGREES);{
+  createCanvas(800, 500);
+  angleMode(DEGREES);
   x = width / 2;
   y = height / 2;
 
@@ -23,8 +19,6 @@ function setup() {
   ];
 
   pickNewTarget();
-
-  }
 }
 
 function draw() {
@@ -70,20 +64,20 @@ function drawObjects() {
     noStroke();
     if (item.label === "sock") {
       //purple
-      rect(-10, 0, 25, 12, 5);
-      rect(5, 0, 10, 20, 5);
+      rect(-10, 0, 25, 40, 10);
+      rect(5, 0, 50, 20, 10);
     } else if (item.label === "mug") {
       //red
-      rect(-15, -15, 30, 30, 3);
+      rect(-15, -15, 30, 50, 3);
       noFill();
       stroke(item.col);
       strokeWeight(4);
-      arc(15, 0, 15, 15, -90, 90);
+      arc(15, 10, 20, 30, -100, 100);
     } else if (item.label === "coin") {
       //gold
-      circle(0, 0, 15);
+      circle(0, 0, 40);
       fill(200, 160, 0);
-      circle(0, 0, 10);
+      circle(0, 0, 30);
     }
     pop();
   });
@@ -113,12 +107,19 @@ function drawToy(tx, ty) {
   fill(eyeColor);
   circle(-11, -5, 10);
   circle(11, -5, 5);
-
-  // Twitchy whiskers/tail
+  
+ // Slight twitchy wave tail
+  noFill();
   stroke(100);
-  strokeWeight(5);
-  line(0, 20, sin(frameCount * 10) * 20, 100);
-  pop();
+  strokeWeight(3);
+  beginShape();
+  for (let i = 0; i < 50; i++) {
+    // i is the length
+    // Lowered the multiplier to 3 for a "slight" wave
+    let xOffset = sin(frameCount * 8 + i * 10) * 3; 
+    vertex(xOffset, 20 + i); 
+  }
+  endShape();
 }
 
 function pickNewTarget() {
