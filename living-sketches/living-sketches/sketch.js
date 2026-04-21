@@ -121,8 +121,11 @@ function eraseBg(imgs, threshold = 10) {
     }
     img.updatePixels();
   }
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
   // this function uses the pixels array
   // we will cover this later in the semester - stay tuned
 }
