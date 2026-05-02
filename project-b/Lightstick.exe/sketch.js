@@ -23,6 +23,8 @@ let showMemory = false;
 let memoryTimer = 0;
 let currentMemory = "";
 
+// let different images appear and loop music in each phase (4)
+
 function draw(){
   textFont("monospace");
   textSize(20);
@@ -30,11 +32,10 @@ function draw(){
 
   push();
   textStyle(BOLD);
-
   for(let i = w.length - 1; i >= 0; i--){
     w[i].moveAndDisplay();
     if (w[i].x <= -w[i].tw){
-      w.splice(i,1);
+      w.splice(i,10);
     }
 
   function typing(){
@@ -319,7 +320,8 @@ function draw() {
   noFill();
   stroke(100, 100, 200, 150);
   strokeWeight(3);
-  ellipse(mouseX, mouseY, 25);
+  ellipse(mouseX, mouseY, 25, 30);
+  ellipse(mouseX, mouseY, 40, 40)
 }
 
 function drawHUD() {
@@ -351,12 +353,12 @@ function drawHUD() {
   textSize(11);
   if (currentPhase < 4) {
     text(
-      "click to wave your lightstick",
+      "my ears are ringing and my heart is singing",
       width / 2,
       height - 14
     );
   } else {
-    text("you are part of the moment", width / 2, height - 14);
+    text("you are part of the moment.", width / 2, height - 14);
   }
 }
 
@@ -378,6 +380,11 @@ function mousePressed() {
     }
   }
 
+  function music(){ // each phase has a different song snippet
+    // jump(cueTime, duration)// seconds, seconds
+    lerp(volume, xx)
+    
+  }
   // change phase based on clicks
   if (clickCount == 5) {
     currentPhase = 1;
@@ -400,8 +407,6 @@ function mousePressed() {
 function mouseReleased() {
   isHolding = true;
 }
-
-
 
 function bigBurst() {
   // spawn a lot of particles when phase changes
