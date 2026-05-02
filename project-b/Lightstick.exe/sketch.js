@@ -24,28 +24,47 @@ let memoryTimer = 0;
 let currentMemory = "";
 
 // let different images appear and loop music in each phase (4)
+// asset variables
+let song1, song2, song3, song4;
+let img1, img2, img3, img4;
 
-function draw(){
-  textFont("monospace");
-  textSize(20);
-  noStroke();
+function preload(){
+  //load music
+  song1 = loadSound('project-b/Lightstick.exe/assets/NewJeans - Ditto (SPOTISAVER)-[AudioTrimmer.com].mp3');
+  song2 = loadSound('project-b/Lightstick.exe/assets/NewJeans - ETA (SPOTISAVER)-[AudioTrimmer.com].mp3');
+  song3 = loadSound('project-b/Lightstick.exe/assets/NewJeans - Hype Boy (SPOTISAVER)-[AudioTrimmer.com].mp3');
+  song4 = loadSound('project-b/Lightstick.exe/assets/NewJeans - New Jeans (SPOTISAVER)-[AudioTrimmer.com].mp3');
 
-  push();
-  textStyle(BOLD);
-  for(let i = w.length - 1; i >= 0; i--){
-    w[i].moveAndDisplay();
-    if (w[i].x <= -w[i].tw){
-      w.splice(i,10);
-    }
-
-  function typing(){
-    input.value("");
-  }
-  }
+  //load images
+  img1 = loadImage('project-b/Lightstick.exe/assets/5+1 nwjnsppg.jpg');
+  img2 = loadImage('project-b/Lightstick.exe/assets/Newjeans Y2k.jpg');
+  img3 = loadImage('project-b/Lightstick.exe/assets/nwjns pinterest.jpg');
+  img4 = loadImage('project-b/Lightstick.exe/assets/supershy album cover.jpg');
 }
+
+// function draw(){
+//   textFont("monospace");
+//   textSize(20);
+//   noStroke();
+
+//   push();
+//   textStyle(BOLD);
+//   for(let i = w.length - 1; i >= 0; i--){
+//     w[i].moveAndDisplay();
+//     if (w[i].x <= -w[i].tw){
+//       w.splice(i,10);
+//     }
+
+//   function typing(){
+//     input.value("");
+//   }
+//   }
+// }
+
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
+
 class Star {
   constructor() {
     this.x = random(width);
@@ -206,6 +225,9 @@ function setup() {
   createCanvas(700, 500);
   colorMode(RGB);
 
+  //start the first song: ditto
+  song1.loop();
+
   // make the stars
   for (let i = 0; i < 100; i++) {
     allStars.push(new Star());
@@ -228,8 +250,22 @@ function setup() {
   }
 }
 function draw() {
-  // draw the dark purple background
+  // draw dark purple background
   background(15, 0, 30);
+
+  //draw phase images
+  push();
+  tint(255, 120); // lowers the opacity so that the lightsticks are still visible
+  if (currentPhase === 0 || currentPhase === 1){
+    image(img1, 0, 0, width, height);
+  } else if (currentPhase === 2){
+    image(img2, 0, 0, width, height);
+  } else if (currentPhase === 2){
+    image(img3, 0, 0, width, height);
+  } else if(currentPhase === 3){
+    image(img4, 0, 0, width, height);
+  }
+  pop();
 
   // draw some purple/pink gradient lines at the top
   for (let y = 0; y < height * 0.7; y++) {
@@ -291,8 +327,11 @@ function draw() {
   }
 
   // draw player lightstick last so it's on top
-  // myLightstick.update();
-  // myLightstick.draw();
+  if (myLightstick != null){
+     myLightstick.update();
+     myLightstick.draw();
+  }
+ 
 
   // draw the hud text
   drawHUD();
@@ -405,7 +444,7 @@ function mousePressed() {
 }
 
 function mouseReleased() {
-  isHolding = true;
+  isHolding = false;
 }
 
 function bigBurst() {
