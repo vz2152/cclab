@@ -30,36 +30,17 @@ let img1, img2, img3, img4;
 
 function preload(){
   //load music
-  song1 = loadSound('project-b/Lightstick.exe/assets/NewJeans - Ditto (SPOTISAVER)-[AudioTrimmer.com].mp3');
-  song2 = loadSound('project-b/Lightstick.exe/assets/NewJeans - ETA (SPOTISAVER)-[AudioTrimmer.com].mp3');
-  song3 = loadSound('project-b/Lightstick.exe/assets/NewJeans - Hype Boy (SPOTISAVER)-[AudioTrimmer.com].mp3');
-  song4 = loadSound('project-b/Lightstick.exe/assets/NewJeans - New Jeans (SPOTISAVER)-[AudioTrimmer.com].mp3');
+  song1 = loadSound('assets/ditto.mp3');
+  song2 = loadSound('assets/hypeboy.mp3');
+  song3 = loadSound('assets/eta.mp3');
+  song4 = loadSound('assets/newjeans.mp3');
 
   //load images
-  img1 = loadImage('project-b/Lightstick.exe/assets/5+1 nwjnsppg.jpg');
-  img2 = loadImage('project-b/Lightstick.exe/assets/Newjeans Y2k.jpg');
-  img3 = loadImage('project-b/Lightstick.exe/assets/nwjns pinterest.jpg');
-  img4 = loadImage('project-b/Lightstick.exe/assets/supershy album cover.jpg');
+  img1 = loadImage('assets/njs.jpg');
+  img2 = loadImage('assets/nwjnspin.jpg');
+  img3 = loadImage('assets/supershy-cover.jpg');
+  img4 = loadImage('assets/y2k.jpg');
 }
-
-// function draw(){
-//   textFont("monospace");
-//   textSize(20);
-//   noStroke();
-
-//   push();
-//   textStyle(BOLD);
-//   for(let i = w.length - 1; i >= 0; i--){
-//     w[i].moveAndDisplay();
-//     if (w[i].x <= -w[i].tw){
-//       w.splice(i,10);
-//     }
-
-//   function typing(){
-//     input.value("");
-//   }
-//   }
-// }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -222,14 +203,16 @@ class Lightstick {
 }
 
 function setup() {
-  createCanvas(700, 500);
+  createCanvas(1000, 700);
   colorMode(RGB);
 
   //start the first song: ditto
   song1.loop();
 
+  let crowdSize = width / 15;
+
   // make the stars
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < crowdSize; i++) {
     allStars.push(new Star());
   }
 
@@ -250,24 +233,10 @@ function setup() {
   }
 }
 function draw() {
-  // draw dark purple background
+  // draw purple background
   background(15, 0, 30);
 
-  //draw phase images
-  push();
-  tint(255, 120); // lowers the opacity so that the lightsticks are still visible
-  if (currentPhase === 0 || currentPhase === 1){
-    image(img1, 0, 0, width, height);
-  } else if (currentPhase === 2){
-    image(img2, 0, 0, width, height);
-  } else if (currentPhase === 2){
-    image(img3, 0, 0, width, height);
-  } else if(currentPhase === 3){
-    image(img4, 0, 0, width, height);
-  }
-  pop();
-
-  // draw some purple/pink gradient lines at the top
+// draw some purple/pink gradient lines at the top
   for (let y = 0; y < height * 0.7; y++) {
     let r = map(y, 0, height * 0.7, 15, 40);
     let g = map(y, 0, height * 0.7, 0, 5);
@@ -282,6 +251,20 @@ function draw() {
     allStars[i].draw();
   }
 
+  //draw phase images
+  push();
+  tint(255, 120); // lowers the opacity so that the lightsticks are still visible
+  if (currentPhase === 0 || currentPhase === 1){
+    image(img1, 0, 0, width, height);
+  } else if (currentPhase === 2){
+    image(img2, 0, 0, width, height);
+  } else if (currentPhase === 3){
+    image(img3, 0, 0, width, height);
+  } else if(currentPhase === 4){
+    image(img4, 0, 0, width, height);
+  }
+  pop();
+
   // draw a grid in later phases (y2k vibes)
   if (currentPhase >= 1) {
     stroke(180, 100, 255, 25);
@@ -293,23 +276,6 @@ function draw() {
       line(0, y, width, y);
     }
   }
-
-  // pink glow at bottom (stage light)
-  if (currentPhase >= 1) {
-    noStroke();
-    fill(255, 80, 180, 20 * currentPhase);
-    ellipse(width / 2, height * 0.88, width * 1.2, 100);
-  }
-
-  // dark floor since lights are off during concert
-  noStroke();
-  fill(8, 0, 18);
-  rect(0, height * 0.91, width, height * 0.09);
-
-  // pink line at stage edge
-  stroke(255, 100, 180, 100);
-  strokeWeight(1);
-  line(0, height * 0.91, width, height * 0.91);
 
   // draw all the crowd lightsticks
   for (let i = 0; i < allLightsticks.length; i++) {
@@ -332,7 +298,6 @@ function draw() {
      myLightstick.draw();
   }
  
-
   // draw the hud text
   drawHUD();
 
@@ -346,6 +311,7 @@ function draw() {
       memoryIndex++;
       memoryTimer = 0;
     }
+
     if (showMemory) {
       fill(255, 255, 255, 200);
       noStroke();
@@ -384,7 +350,7 @@ function drawHUD() {
     15
   );
 
-  // instructions at bottom
+  // instructions at bottom of the page
   fill(10, 0, 20, 180);
   rect(0, height - 28, width, 28);
   fill(255, 100, 180, 160);
@@ -401,13 +367,29 @@ function drawHUD() {
   }
 }
 
+//switch music
+function changeTrack(newSong){
+  song1.stop();
+  song2.stop();
+  song3.stop();
+  song4.stop();
+  newSong.loop();
+}
+
 // mouse activitiess
 function mousePressed() {
   isHolding = true;
   clickCount++;
 
-  // spawn some particles where you clicked
-  for (let i = 0; i < 10; i++) {
+  // spawn some particles where you clicked 
+
+
+
+
+
+
+  ///make the particles appear for as long as u hold the mouse
+  for (let i = 0; i < 30; i++) {
     allParticles.push(new Particle(mouseX, mouseY));
   }
 
@@ -419,29 +401,30 @@ function mousePressed() {
     }
   }
 
-  function music(){ // each phase has a different song snippet
-    // jump(cueTime, duration)// seconds, seconds
-    lerp(volume, xx)
-    
-  }
-  // change phase based on clicks
-  if (clickCount == 5) {
+  // change phase based on # of clicks AND switch da music
+  if (clickCount == 5 && currentPhase !== 1){
     currentPhase = 1;
     bigBurst();
+    //phase 1 still plays song1
   }
-  if (clickCount == 10) {
+  if (clickCount == 10 && currentPhase !== 2){
     currentPhase = 2;
     bigBurst();
+    changeTrack(song2); // Swap to song 2!
   }
-  if (clickCount == 15) {
+  if (clickCount == 15 && currentPhase !== 3) {
     currentPhase = 3;
     bigBurst();
+    changeTrack(song3); // Swap to song 3!
   }
   if (clickCount >= 20 && currentPhase == 3) {
     currentPhase = 4;
     bigBurst();
+    changeTrack(song4); // Swap to song 4!
   }
 }
+ // lerp(volume, xx)
+
 
 function mouseReleased() {
   isHolding = false;
