@@ -416,14 +416,14 @@ function drawHUD() {
   //  at bottom of the page
   fill(10, 0, 20, 180);
   rect(0, height - 60, width, 60);
-  fill(255, 100, 180, 160);
+  fill(200, 210, 180, 160);
   textAlign(CENTER, CENTER);
-  textSize(11);
+  textSize(30);
   if (currentPhase < 3) {
     text(
-      "my ears are ringing and my heart is singing", width / 2, height - 100);
+      "my ears are ringing and my heart is singing", width / 2, height - 40);
   } else {
-    text("✦ you are part of the moment ✦", width / 2, height - 100);
+    text("✦ you are part of the moment ✦", width / 2, height - 40);
   }
 }
 
