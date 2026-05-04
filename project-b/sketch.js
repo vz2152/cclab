@@ -235,10 +235,16 @@ function setup() {
   }
 }
 function draw() {
+
+  if (!gameStarted){
+    drawIntroScreen();
+    return;
+  }
+  
   // draw purple background
   background(15, 0, 30);
 
-  currentVolume = lerp(currentVolume, targetVolume, 0.02);
+  currentVolume = lerp(currentVolume, targetVolume, 0.01);
   song1.setVolume(currentVolume);
   song2.setVolume(currentVolume);
   song3.setVolume(currentVolume);
@@ -334,16 +340,16 @@ function drawIntroScreen() {
   background(15, 0, 30);
   textAlign(CENTER, CENTER);
   
-  fill(255);
+  fill(211, 211, 245);
   textSize(60);
   textStyle(BOLD);
-  text("NEWJEANS BUNNIES CAMP", width / 2, height / 2 - 40);
+  text("Lightstick.exe", width / 2, height / 2 - 40);
 
   textSize(24);
   textStyle(NORMAL);
   let pulse = map(sin(frameCount * 0.05), -1, 1, 100, 255);
-  fill(255, 105, 180, pulse); 
-  text("click anywhere to enter the venue...", width / 2, height / 2 + 40);
+  fill(211, 211, 245, pulse); 
+  text("click anywhere to enter the concert venue!", width / 2, height / 2 + 40);
 }
 
 function drawHUD() {
@@ -357,20 +363,20 @@ function drawHUD() {
   noStroke();
   textAlign(LEFT, CENTER);
   textSize(12);
-  text("newjeans concert :)", 15, 15);
+  text("bunnies.concert — lightstick.exe", 15, 15);
 
 
   //  at bottom of the page
   fill(10, 0, 20, 180);
-  rect(0, height - 28, width, 28);
+  rect(0, height - 45, width, 45);
   fill(255, 100, 180, 160);
   textAlign(CENTER, CENTER);
   textSize(11);
-  if (currentPhase < 4) {
+  if (currentPhase < 3) {
     text(
-      "my ears are ringing and my heart is singing", width / 2, height - 14);
+      "my ears are ringing and my heart is singing", width / 2, height - 40);
   } else {
-    text("you are part of the moment.", width / 2, height - 14);
+    text("✦ you are part of the moment ✦", width / 2, height - 40);
   }
 }
 
@@ -464,7 +470,7 @@ function drawProgressBar() {
   fillWidth = constrain(fillWidth, 0, maxBarWidth); 
 
   // draw the filled progress
-  fill(255, 105, 180);
+  fill(161, 204, 173);
   rect(x, y, fillWidth, barHeight); 
   
   stroke(15, 0, 30);
@@ -479,4 +485,5 @@ function drawProgressBar() {
     let circleX = constrain(fillWidth, 0, maxBarWidth - 8)
     circle(x + fillWidth, y + barHeight / 2, barHeight + 6);
   }
+  
 }
