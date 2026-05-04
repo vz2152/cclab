@@ -180,8 +180,9 @@ class Lightstick {
       r = 255; g = 80; b = 200;
     }
 
+
     let orbSize = this.isPlayer ? 20 : 12;
-   let earW = orbSize * 0.5;
+    let earW = orbSize * 0.5;
     let earH = orbSize * 1.1;
     let earOffset = orbSize * 0.35;
 
@@ -190,11 +191,11 @@ class Lightstick {
     fill(r, g, b, 30);
     ellipse(this.x, this.y, this.glowSize * 3);
     fill(r, g, b, 60);
-   ellipse(this.x, this.y, this.glowSize * 1.5);
+      ellipse(this.x, this.y, this.glowSize * 1.5);
 
     // ears (two tall ovals behind the head)
     fill(r, g, b);
-    ellipse(this.x - earOffset, this.y - orbSize * 0.7, earW, earH); // left ear
+      ellipse(this.x - earOffset, this.y - orbSize * 0.7, earW, earH); // left ear
     ellipse(this.x + earOffset, this.y - orbSize * 0.7, earW, earH); // right ear
 
     // inner ear (slightly darker/pinker)
@@ -243,8 +244,6 @@ function setup() {
   button.position(175, 50);
   button.mousePressed(greet);
 
-  //start the first song: ditto
-  song1.loop();
 
   let crowdSize = width / 2;
 
@@ -440,13 +439,11 @@ function changeTrack(newSong){
 function mousePressed() {
   if (gameStarted === false) {
     gameStarted = true;
-    // start playing the song
-
+    song1.loop();
+    // start playing ditto!!!
     targetVolume = 1.0; // start raising the volume
     return; 
   }
-
-
   isHolding = true;
   clickCount++;
 
