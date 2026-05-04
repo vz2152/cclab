@@ -1,4 +1,5 @@
 // my newjeans concert project :)
+let gameStarted = false;
 
 let allLightsticks = []; // array of objects
 let allParticles = [];
@@ -10,13 +11,15 @@ let currentPhase = 0;
 let isHolding = false;
 let stickColor = 0; // hue value
 
+let currentVolume = 0; // starts silent
+let targetVolume = 0; // stays silent until the user clicks start
+
 // memory messages that appear at the end
 let memories = [
   "the first beat dropped and everyone screamed",
   "hanni looked right at me i think",
   "we all sang every word together",
-  "i cried on the ride home",
-];
+  "i cried on the ride home", ];
 
 let memoryIndex = 0;
 let showMemory = false;
@@ -129,8 +132,7 @@ class Lightstick {
       this.y =
         this.startY +
         sin(frameCount * this.waveSpeed + this.offset) *
-          this.waveAmount * 
-          (currentPhase + 1);
+          this.waveAmount * (currentPhase + 1);
 
       // in later phases crowd sticks slowly change color too
       if (currentPhase >= 2) {
@@ -203,13 +205,13 @@ class Lightstick {
 }
 
 function setup() {
-  createCanvas(1000, 700);
-  colorMode(RGB);
+  createCanvas(windowWidth, windowHeight);
+  // colorMode(RGB);
 
   //start the first song: ditto
   song1.loop();
 
-  let crowdSize = width / 15;
+  let crowdSize = width / 2;
 
   // make the stars
   for (let i = 0; i < crowdSize; i++) {
@@ -236,14 +238,11 @@ function draw() {
   // draw purple background
   background(15, 0, 30);
 
-// draw some purple/pink gradient lines at the top
-  for (let y = 0; y < height * 0.7; y++) {
-    let r = map(y, 0, height * 0.7, 15, 40);
-    let g = map(y, 0, height * 0.7, 0, 5);
-    let b = map(y, 0, height * 0.7, 30, 70);
-    stroke(r, g, b);
-    line(0, y, width, y);
-  }
+  currentVolume = lerp(currentVolume, targetVolume, 0.02);
+  song1.setVolume(currentVolume);
+  song2.setVolume(currentVolume);
+  song3.setVolume(currentVolume);
+  song4.setVolume(currentVolume);
 
   // draw stars
   for (let i = 0; i < allStars.length; i++) {
@@ -265,7 +264,7 @@ function draw() {
   }
   pop();
 
-  // draw a grid in later phases (y2k vibes)
+  // draw a grid in later phases
   if (currentPhase >= 1) {
     stroke(180, 100, 255, 25);
     strokeWeight(0.5);
@@ -297,7 +296,7 @@ function draw() {
      myLightstick.update();
      myLightstick.draw();
   }
- 
+
   // draw the hud text
   drawHUD();
 
@@ -327,6 +326,24 @@ function draw() {
   strokeWeight(3);
   ellipse(mouseX, mouseY, 25, 30);
   ellipse(mouseX, mouseY, 40, 40)
+
+  drawProgressBar();
+}
+
+function drawIntroScreen() {
+  background(15, 0, 30);
+  textAlign(CENTER, CENTER);
+  
+  fill(255);
+  textSize(60);
+  textStyle(BOLD);
+  text("NEWJEANS BUNNIES CAMP", width / 2, height / 2 - 40);
+
+  textSize(24);
+  textStyle(NORMAL);
+  let pulse = map(sin(frameCount * 0.05), -1, 1, 100, 255);
+  fill(255, 105, 180, pulse); 
+  text("click anywhere to enter the venue...", width / 2, height / 2 + 40);
 }
 
 function drawHUD() {
@@ -342,15 +359,8 @@ function drawHUD() {
   textSize(12);
   text("newjeans concert :)", 15, 15);
 
-  textAlign(RIGHT, CENTER);
-  fill(200, 150, 255);
-  text(
-    "clicks: " + clickCount + "/20   phase: " + currentPhase,
-    width - 15,
-    15
-  );
 
-  // instructions at bottom of the page
+  //  at bottom of the page
   fill(10, 0, 20, 180);
   rect(0, height - 28, width, 28);
   fill(255, 100, 180, 160);
@@ -358,10 +368,7 @@ function drawHUD() {
   textSize(11);
   if (currentPhase < 4) {
     text(
-      "my ears are ringing and my heart is singing",
-      width / 2,
-      height - 14
-    );
+      "my ears are ringing and my heart is singing", width / 2, height - 14);
   } else {
     text("you are part of the moment.", width / 2, height - 14);
   }
@@ -378,17 +385,19 @@ function changeTrack(newSong){
 
 // mouse activitiess
 function mousePressed() {
+  if (gameStarted === false) {
+    gameStarted = true;
+    // start playing the song
+
+    targetVolume = 1.0; // start raising the volume
+    return; 
+  }
+
+
   isHolding = true;
   clickCount++;
 
   // spawn some particles where you clicked 
-
-
-
-
-
-
-  ///make the particles appear for as long as u hold the mouse
   for (let i = 0; i < 30; i++) {
     allParticles.push(new Particle(mouseX, mouseY));
   }
@@ -402,28 +411,27 @@ function mousePressed() {
   }
 
   // change phase based on # of clicks AND switch da music
-  if (clickCount == 5 && currentPhase !== 1){
+  if (clickCount == 4 && currentPhase !== 1){
     currentPhase = 1;
     bigBurst();
     //phase 1 still plays song1
   }
-  if (clickCount == 10 && currentPhase !== 2){
+  if (clickCount == 8 && currentPhase !== 2){
     currentPhase = 2;
     bigBurst();
     changeTrack(song2); // Swap to song 2!
   }
-  if (clickCount == 15 && currentPhase !== 3) {
+  if (clickCount == 12 && currentPhase !== 3) {
     currentPhase = 3;
     bigBurst();
     changeTrack(song3); // Swap to song 3!
   }
-  if (clickCount >= 20 && currentPhase == 3) {
+  if (clickCount >= 16 && currentPhase == 3) {
     currentPhase = 4;
     bigBurst();
     changeTrack(song4); // Swap to song 4!
   }
 }
- // lerp(volume, xx)
 
 
 function mouseReleased() {
@@ -436,5 +444,39 @@ function bigBurst() {
     let x = random(width);
     let y = random(height * 0.3, height * 0.8);
     allParticles.push(new Particle(x, y));
+  }
+}
+
+function drawProgressBar() {
+  // set up the size and position
+  let maxBarWidth = width; // make the bar take up 80% of the screen width
+  let barHeight = 10; // thickness of the bar
+  let x = 0; // center it on the X axis
+  let y = 30; // place it near the bottom of the screen
+
+  // draw the background track
+  noStroke();
+  fill(50, 50, 50, 150); // semi-transparent gray
+  rect(x, y, maxBarWidth, barHeight); 
+
+  // calculate how full the bar should be
+  let fillWidth = map(clickCount, 0, 16, 0, maxBarWidth);
+  fillWidth = constrain(fillWidth, 0, maxBarWidth); 
+
+  // draw the filled progress
+  fill(255, 105, 180);
+  rect(x, y, fillWidth, barHeight); 
+  
+  stroke(15, 0, 30);
+  strokeWeight(3);
+  line(width * 0.25, y, width * 0.25, y + barHeight); // 4/16 mark
+  line(width * 0.50, y, width * 0.50, y + barHeight); // 8/16 mark
+  line(width * 0.75, y, width * 0.75, y + barHeight); // 12/16 mark
+
+  if (fillWidth > 0) {
+    noStroke();
+    fill(255);
+    let circleX = constrain(fillWidth, 0, maxBarWidth - 8)
+    circle(x + fillWidth, y + barHeight / 2, barHeight + 6);
   }
 }
