@@ -5,6 +5,8 @@ let allLightsticks = []; // array of objects
 let allParticles = [];
 let allStars = [];
 
+let w = []; // word array
+
 let myLightstick;
 let clickCount = 0;
 let currentPhase = 0;
@@ -101,6 +103,24 @@ class Particle {
   }
 }
 
+class Word{
+  constructor(word, x, y){
+    this.word = word; 
+    this.opacity = 255;
+    this.x = x;
+    this.y = y;
+    this.tw = textWidth(this.word); // fixed
+  }
+
+  moveAndDisplay() {
+    fill(255, 150, 200);
+    textSize(50);;
+    textAlign(LEFT);
+    text(this.word, this.x, this.y);
+    this.x -= 3;
+  }
+}
+
 class Lightstick {
   constructor(x, y, isPlayer) {
     this.x = x;
@@ -145,68 +165,83 @@ class Lightstick {
   }
 
   draw() {
-    // convert hue to rgb (i found this formula online)
-    let r = 255;
+    // convert hue to rgb that i found online
+     let r = 255;
     let g = 100;
     let b = 200;
 
-    if (this.hue < 60) {
-      r = 255;
-      g = this.hue * 4;
-      b = 100;
-    } else if (this.hue < 180) {
-      r = 80;
-      g = 200;
-      b = 255;
-    } else if (this.hue < 270) {
-      r = 80;
-      g = 100;
-      b = 255;
-    } else {
-      r = 255;
-      g = 80;
-      b = 200;
+   if (this.hue < 60) {
+     r = 255; g = this.hue * 4; b = 100;
+   } else if (this.hue < 180) {
+     r = 80; g = 200; b = 255;
+   } else if (this.hue < 270) {
+    r = 80; g = 100; b = 255;
+   } else {
+      r = 255; g = 80; b = 200;
     }
 
-    // draw the glow around the orb
+    let orbSize = this.isPlayer ? 20 : 12;
+   let earW = orbSize * 0.5;
+    let earH = orbSize * 1.1;
+    let earOffset = orbSize * 0.35;
+
+      // glow
     noStroke();
     fill(r, g, b, 30);
     ellipse(this.x, this.y, this.glowSize * 3);
     fill(r, g, b, 60);
-    ellipse(this.x, this.y, this.glowSize * 1.5);
+   ellipse(this.x, this.y, this.glowSize * 1.5);
 
-    // draw the orb
+    // ears (two tall ovals behind the head)
     fill(r, g, b);
-    if (this.isPlayer) {
-      ellipse(this.x, this.y, 20);
-    } else {
-      ellipse(this.x, this.y, 12);
-    }
+    ellipse(this.x - earOffset, this.y - orbSize * 0.7, earW, earH); // left ear
+    ellipse(this.x + earOffset, this.y - orbSize * 0.7, earW, earH); // right ear
 
-    // draw the stick handle
-    stroke(r, g, b, 150);
-    strokeWeight(4);
-    if (this.isPlayer) {
-      line(this.x, this.y + 1, this.x, this.y + 60);
-    } else {
-      line(this.x, this.y + 1, this.x, this.y + 30);
-    }
+    // inner ear (slightly darker/pinker)
+    fill(min(r + 40, 255), g * 0.5, min(b + 40, 255), 180);
+    ellipse(this.x - earOffset, this.y - orbSize * 0.7, earW * 0.5, earH * 0.6);
+    ellipse(this.x + earOffset, this.y - orbSize * 0.7, earW * 0.5, earH * 0.6);
 
-    // interaction between objects: if player is nearby, glow brighter
-    if (!this.isPlayer && myLightstick != null) {
-      let d = dist(this.x, this.y, myLightstick.x, myLightstick.y);
-      if (d < 100) {
+    // bunny head
+   fill(r, g, b);
+   ellipse(this.x, this.y, orbSize);
+
+   // little nose dot
+   fill(255, 180, 210);
+   ellipse(this.x, this.y + orbSize * 0.1, orbSize * 0.2, orbSize * 0.15);
+
+    // stick handle
+   stroke(r, g, b, 150);
+   strokeWeight(4);
+   if (this.isPlayer) {
+   line(this.x, this.y + orbSize * 0.5, this.x, this.y + 60);
+    } else {
+    line(this.x, this.y + orbSize * 0.5, this.x, this.y + 30);
+   }
+
+   // nearby glow interaction
+   if (!this.isPlayer && myLightstick != null) {
+     let d = dist(this.x, this.y, myLightstick.x, myLightstick.y);
+       if (d < 100) {
         noStroke();
         fill(r, g, b, 80);
-        ellipse(this.x, this.y, this.glowSize * 3);
-      }
-    }
+       ellipse(this.x, this.y, this.glowSize * 3);
+     }
+   }
   }
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  // colorMode(RGB);
+  colorMode(RGB);
+
+  input = createInput("enter your memory"); // type memory
+  input.position(15, 50);
+  input.mousePressed(typing);
+
+  button = createButton("submit");
+  button.position(175, 50);
+  button.mousePressed(greet);
 
   //start the first song: ditto
   song1.loop();
@@ -222,8 +257,7 @@ function setup() {
   myLightstick = new Lightstick(width / 2, height / 2, true);
   console.log(myLightstick);
 
-  // make all the crowd lightsticks
-  // 5 rows of 18 sticks
+  // make the crowd lightsticks
   for (let row = 0; row < 5; row++) {
     for (let col = 0; col < 18; col++) {
       let x = map(col, 0, 17, 40, width - 40);
@@ -251,10 +285,23 @@ function draw() {
   song4.setVolume(currentVolume);
 
   // draw stars
-  for (let i = 0; i < allStars.length; i++) {
+  for (let i = 0; i < allStars.length; i++) { //stars loop
     allStars[i].update();
     allStars[i].draw();
   }
+
+  textFont("monospace");
+  textSize(30);
+  noStroke();
+  push();
+  textStyle(BOLD);
+  for (let i = w.length - 1; i >= 0; i--) {
+  w[i].moveAndDisplay();
+  if (w[i].x <= -w[i].tw) {
+    w.splice(i, 1);
+    }
+  }
+  pop();
 
   //draw phase images
   push();
@@ -368,15 +415,15 @@ function drawHUD() {
 
   //  at bottom of the page
   fill(10, 0, 20, 180);
-  rect(0, height - 45, width, 45);
+  rect(0, height - 60, width, 60);
   fill(255, 100, 180, 160);
   textAlign(CENTER, CENTER);
   textSize(11);
   if (currentPhase < 3) {
     text(
-      "my ears are ringing and my heart is singing", width / 2, height - 40);
+      "my ears are ringing and my heart is singing", width / 2, height - 100);
   } else {
-    text("✦ you are part of the moment ✦", width / 2, height - 40);
+    text("✦ you are part of the moment ✦", width / 2, height - 100);
   }
 }
 
@@ -412,7 +459,7 @@ function mousePressed() {
   for (let i = 0; i < allLightsticks.length; i++) {
     let d = dist(mouseX, mouseY, allLightsticks[i].x, allLightsticks[i].y);
     if (d < 120) {
-      allLightsticks[i].hue = allLightsticks[i].hue + 40;
+      allLightsticks[i].hue = allLightsticks[i].hue + 200;
     }
   }
 
@@ -436,6 +483,25 @@ function mousePressed() {
     currentPhase = 4;
     bigBurst();
     changeTrack(song4); // Swap to song 4!
+  }
+}
+
+function typing() { // enter memory
+  input.value("");
+}
+
+function greet() {
+  const sentiment = input.value();
+  if (sentiment.length > 0) {
+    for (let i = 0; i < 5; i++) {
+      let typedword = new Word(
+        sentiment,
+        width + i * 350, // stagger them so they don't all appear at once
+        random(80, height - 60)
+      );
+      w.push(typedword);
+    }
+    input.value("");
   }
 }
 
